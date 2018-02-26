@@ -22,15 +22,25 @@ def main():
 
     measure(urldata)
 
+
 def ismalicious(record):
     """classify a single url as either malicious or not malicious"""
+    score, reason = classify(record)
+    return score >= 1
+
+def classify(record):
+    """classify a single url and return its score"""
     score = 0
+    reason = []
+
     # old domains are likely benign
     # newly-registered domains are likely malicious
     if int(record["domain_age_days"]) < 10:
         score += 1
+        reason.append("age")
     if int(record["domain_age_days"]) > 365:
         score -= 1
+        reason.append("age")
 
     # valid domains shouldn't have a tld in a subdomain
     # eg. eu.battle.net.blizzardentertainmentfreeofactivitiese.com
@@ -38,28 +48,39 @@ def ismalicious(record):
         # .com.cn is valid
         if not record['host'].endswith(".com.cn"):
             score += 2
+            reason.append("tld in subdomain")
 
     # www is a good sign
     if "www" in record['domain_tokens'][:1]:
         score -= 1
+        reason.append("has www")
 
-    return score >= 1
+    return score, reason
 
 def measure(urldata):
     """measure our false positive and false negative rate"""
     matrix = [[0, 0], [0, 0]]
     false_positives = []
+    false_negatives = []
     for record in urldata:
         prediction = bool(ismalicious(record))
         actual = bool(record['malicious_url'])
 
+        if prediction == False and actual == True:
+            false_negatives.append(record)
         if prediction == True and actual == False:
             false_positives.append(record)
 
         matrix[actual][prediction] += 1
 
+    for record in false_negatives[:20]:
+        score, _ = classify(record)
+        print("false negative ({}): {}".format(score, record['url']))
+
+    print()
     for record in false_positives[:20]:
-        print("false positive:", record['url'])
+        score, _ = classify(record)
+        print("false positive ({}): {}".format(score, record['url']))
 
     print("true positives:", matrix[1][1])
     print("true negatives:", matrix[0][0])
