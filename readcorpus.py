@@ -47,11 +47,13 @@ def classify(record):
 
     # valid domains shouldn't have a tld in a subdomain
     # eg. eu.battle.net.blizzardentertainmentfreeofactivitiese.com
-    if any(tld in record['domain_tokens'][:-1] for tld in ("com", "net", "org")):
-        # .com.cn is valid
-        if not record['host'].endswith((".com.cn", ".com.tw", ".com.hk")):
-            score += 5
-            reason.append("tld in subdomain")
+    # only look in the subdomain, not the registered domain, because
+    # eg .com.cn is valid
+    subdomain = stripsuffix(record['host'], record['registered_domain'])
+    subdomain_tokens = subdomain.split('.')
+    if any(tld in subdomain_tokens for tld in ("com", "net", "org")):
+        score += 5
+        reason.append("tld in subdomain")
 
     # www is a good sign
     if "www" in record['domain_tokens'][:1]:
@@ -101,6 +103,11 @@ def classify(record):
         reason.append("php")
 
     return score, reason
+
+def stripsuffix(s, suffix):
+    if s.endswith(suffix):
+        return s[:-len(suffix)]
+    return s
 
 def measure(urldata):
     """measure our false positive and false negative rate"""
