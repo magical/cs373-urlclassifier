@@ -99,6 +99,11 @@ def classify(record):
         reason.append("numbers in host")
 
 
+    # lots of malware seems to target wordpress
+    if 'wp-admin' in record['path_tokens'] or 'wp-includes' in record['path_tokens']:
+        score += 2
+        reason.append("wordpress")
+
     # whitelist cloudfront & yimg
     if record['host'].endswith(HOST_WHITELIST):
         score -= 1
