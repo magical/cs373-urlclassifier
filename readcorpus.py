@@ -69,7 +69,7 @@ def classify(record):
 
     # check if any path component looks like a domain name
     # eg. http://www.hxc.sdnu.edu.cn/www.paypal.co.uk/webscr.html
-    if '/www.' in record['path']:
+    if '/www.' in record['path'] or '.com/' in record['path']:
         score += 1
         reason.append("www in path")
 
