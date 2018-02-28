@@ -31,6 +31,7 @@ def ismalicious(record):
 TLD_WHITELIST = {"com", "net", "org", "edu"}
 TLD_BLACKLIST = {"ru", "vu"}
 WORD_BLACKLIST = ["paypal", "googledocs", "googledrive"]
+HOST_WHITELIST = (".yimg.com", ".cloudfront.net")
 
 def classify(record):
     """classify a single url and return its score"""
@@ -97,6 +98,11 @@ def classify(record):
         score += 1
         reason.append("numbers in host")
 
+
+    # whitelist cloudfront & yimg
+    if record['host'].endswith(HOST_WHITELIST):
+        score -= 1
+        reason.append("whitelisted host")
 
 
     # high alex rank is good
