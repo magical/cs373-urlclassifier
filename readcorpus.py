@@ -30,6 +30,7 @@ def ismalicious(record):
 
 TLD_WHITELIST = {"com", "net", "org", "edu"}
 TLD_BLACKLIST = {"ru", "vu"}
+WORD_BLACKLIST = ["paypal", "googledocs", "googledrive"]
 
 def classify(record):
     """classify a single url and return its score"""
@@ -118,9 +119,13 @@ def classify(record):
         score += 1
         reason.append("blacklisted tld")
 
+    if any(word in record['url'] for word in WORD_BLACKLIST):
+        score += 2
+        reason.append("blacklisted word")
+
     # I'm not saying all php is malicious but...
     # all php is malicious
-    if '.php' in record['path']:
+    if record['file_extension'] == 'php':
         score += 1
         reason.append("php")
 
