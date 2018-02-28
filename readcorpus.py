@@ -141,6 +141,11 @@ def classify(record):
         score += 1
         reason.append("php")
 
+    # non-80 or 443 port is suspicious
+    if record['port'] not in (80, 443):
+        score += 1
+        reason.append("port")
+
     # long urls are suspicious
     if record['num_path_tokens'] > 12:
         score += 2
