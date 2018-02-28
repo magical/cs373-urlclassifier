@@ -81,6 +81,11 @@ def classify(record):
                     score += 2
                     reason.append("MX record geo does not match A record geo")
 
+    ndigits = sum(c.isdigit() for c in record['host'])
+    if ndigits >= 5:
+        score += 1
+        reason.append("numbers in host")
+
 
     # high alex rank is good
     if record.get('alexa_rank') is not None:
