@@ -63,20 +63,23 @@ def classify(record):
     # check if any path component looks like a domain name
     # eg. http://www.hxc.sdnu.edu.cn/www.paypal.co.uk/webscr.html
 
-    if record.get('mxhosts') and record['mxhosts'][0].get('ips'):
-        score -= 1
-        reason.append("has mx record")
+    # check if MX record exists
+    # except don't because we get a worse accuracy with this enabled
+    if False:
+        if record.get('mxhosts') and record['mxhosts'][0].get('ips'):
+            score -= 1
+            reason.append("has mx record")
 
-        try:
-            mxgeo = record['mxhosts'][0]['ips'][0]['geo']
-            ageo = record['ips'][0]['geo']
-        except (IndexError, KeyError, TypeError):
-            pass
-        else:
-            if mxgeo != ageo and mxgeo is not None and ageo is not None:
-                #print(mxgeo, ageo)
-                score += 2
-                reason.append("MX record geo does not match A record geo")
+            try:
+                mxgeo = record['mxhosts'][0]['ips'][0]['geo']
+                ageo = record['ips'][0]['geo']
+            except (IndexError, KeyError, TypeError):
+                pass
+            else:
+                if mxgeo != ageo and mxgeo is not None and ageo is not None:
+                    #print(mxgeo, ageo)
+                    score += 2
+                    reason.append("MX record geo does not match A record geo")
 
 
     # high alex rank is good
