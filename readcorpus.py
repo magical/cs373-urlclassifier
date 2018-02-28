@@ -51,8 +51,8 @@ def classify(record):
         score += 1
         reason.append("age")
     elif int(record["domain_age_days"]) > 365:
-        score -= 1
-        reason.append("age")
+        score -= 2
+        reason.append("old age")
 
     # valid domains shouldn't have a tld in a subdomain
     # eg. eu.battle.net.blizzardentertainmentfreeofactivitiese.com
