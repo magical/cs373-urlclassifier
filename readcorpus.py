@@ -94,6 +94,12 @@ def classify(record):
         score += 1
         reason.append("blacklisted tld")
 
+    # I'm not saying all php is malicious but...
+    # all php is malicious
+    if '.php' in record['path']:
+        score += 1
+        reason.append("php")
+
     return score, reason
 
 def measure(urldata):
@@ -115,13 +121,12 @@ def measure(urldata):
     for record in false_negatives[:20]:
         score, reason = classify(record)
         print("false negative ({}): {}".format(score, record['url']))
-        for r in reason:
-            print("\t"+r)
 
     print()
     for record in false_positives[:20]:
-        score, _ = classify(record)
+        score, reason = classify(record)
         print("false positive ({}): {}".format(score, record['url']))
+        print("\t" + ", ".join(reason))
 
     print("true positives:", matrix[1][1])
     print("true negatives:", matrix[0][0])
