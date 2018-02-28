@@ -62,6 +62,9 @@ def classify(record):
 
     # check if any path component looks like a domain name
     # eg. http://www.hxc.sdnu.edu.cn/www.paypal.co.uk/webscr.html
+    if '/www.' in record['path']:
+        score += 1
+        reason.append("www in path")
 
     # check if MX record exists
     # except don't because we get a worse accuracy with this enabled
@@ -85,6 +88,7 @@ def classify(record):
     if ndigits >= 5:
         score += 1
         reason.append("numbers in host")
+
 
 
     # high alex rank is good
