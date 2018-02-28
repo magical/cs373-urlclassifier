@@ -151,7 +151,7 @@ def measure(urldata):
 
         matrix[actual][prediction] += 1
 
-    for record in false_negatives[:20]:
+    for record in false_negatives[-50:]:
         score, reason = classify(record)
         print("false negative ({}): {}".format(score, record['url']))
 
