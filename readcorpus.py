@@ -20,7 +20,10 @@ def main():
     with open(args.file) as corpus:
         urldata = json.load(corpus, encoding="latin1")
 
-    measure(urldata)
+    if urldata and urldata[0]['malicious_url'] is not None:
+        measure(urldata)
+    else:
+        test(urldata)
 
 
 def ismalicious(record):
@@ -37,6 +40,10 @@ def classify(record):
     """classify a single url and return its score"""
     score = 0 # high is bad, low is good
     reason = []
+
+    # ugh, fix the data
+    if record['registered_domain'] is None:
+        record['registered_domain'] = ""
 
     # if we can't get DNS, that's probably a sign of a fast-flux bot
     # but then, if we can't visit the site is it actually malicious??
@@ -197,6 +204,22 @@ def measure(urldata):
 
     total = matrix[0][0] + matrix[0][1] + matrix[1][0] + matrix[1][1]
     print("accuracy: {:%}".format((matrix[1][1] + matrix[0][0]) / total))
+
+def test(urldata):
+    positives  = 0
+    negatives = 0
+    for record in urldata:
+        prediction = bool(ismalicious(record))
+
+        if prediction == True:
+            positives += 1
+        else:
+            negatives += 1
+
+        print("{}, {}".format(record['url'], int(prediction)))
+
+    print("positives:", positives)
+    print("negatives:", negatives)
 
 
 if __name__ == "__main__":
