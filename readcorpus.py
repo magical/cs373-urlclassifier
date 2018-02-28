@@ -96,6 +96,9 @@ def classify(record):
         elif alexa_rank < 100:
             score -= 1
             reason.append("high alexa rank")
+    else:
+        score += 1
+        reason.append('no alexa rank')
 
     if record['tld'] in TLD_WHITELIST:
         score -= 1
