@@ -93,8 +93,9 @@ def classify(record):
                     score += 2
                     reason.append("MX record geo does not match A record geo")
 
+    # numb3r5
     ndigits = sum(c.isdigit() for c in record['host'])
-    if ndigits >= 5:
+    if ndigits >= 3:
         score += 1
         reason.append("numbers in host")
 
