@@ -50,7 +50,7 @@ def classify(record):
     if any(tld in record['domain_tokens'][:-1] for tld in ("com", "net", "org")):
         # .com.cn is valid
         if not record['host'].endswith((".com.cn", ".com.tw", ".com.hk")):
-            score += 2
+            score += 5
             reason.append("tld in subdomain")
 
     # www is a good sign
