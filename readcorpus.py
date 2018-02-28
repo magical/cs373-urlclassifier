@@ -117,6 +117,17 @@ def classify(record):
         score += 1
         reason.append("php")
 
+    # long urls are suspicious
+    if record['num_path_tokens'] > 12:
+        score += 2
+        reason.append("long path tokens")
+    elif record['path_len'] > 50:
+        score += 1
+        reason.append("long path")
+    elif len(record['url']) > 100:
+        score += 1
+        reason.append("long url")
+
     return score, reason
 
 def stripsuffix(s, suffix):
