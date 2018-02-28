@@ -36,6 +36,13 @@ def classify(record):
     score = 0 # high is bad, low is good
     reason = []
 
+    # if we can't get DNS, that's probably a sign of a fast-flux bot
+    # but then, if we can't visit the site is it actually malicious??
+    # this flags all of 3 domains
+    if not record['ips']:
+        score += 1
+        reason.append("no DNS")
+
     # old domains are likely benign
     # newly-registered domains are likely malicious
     if int(record["domain_age_days"]) < 10:
